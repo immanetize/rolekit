@@ -111,8 +111,15 @@ class Role(RoleBase):
         #                  },
         "dns_forwarders": None,
 
-        # TODO: There are many less-common options to ipa-server-install.
-        # The API should support them.
+        # Additional ipa-server-install arguments
+        # This should be a dictionary of arguments and their values:
+        # "ipa_server_install_args": {
+        #                               "external-cert-file",
+        #                               "http-pin":     "certificate_pass",
+        #                               "allow_zone_overlap": True
+        #                           }
+        "ipa_server_install_args":  None,
+
     })
 
     # Use _READONLY_SETTINGS from RoleBase and add new if needed.
@@ -216,6 +223,18 @@ class Role(RoleBase):
                      for x in values['dns_forwarders']['ipv6']]
             else:
                 ipa_install_args.append('--no-forwarders')
+        
+        if ipa_server_install_args in values:
+            for argument in values['ipa_server_install_args'].keys():
+                if values['ipa_server_install_args'][argument] == True:
+                    ipa_install_args.append("--%s" % argument)
+                # because if you tell everyone True is a valid option, somebody *will* try False:
+                elif values['ipa_server_install_args'][argument] == False:
+                    pass
+                else:
+                    ipa_install_args.append("--%s=%s" % (argument, values['ipa_server_install_args'][argument]))
+        # TODO: If the user has specified a root CA file,
+        # set up the argument to ipa-server-install
 
             # If the user has requested the reverse zone add it
             if 'reverse_zone' in values:
@@ -242,8 +261,6 @@ class Role(RoleBase):
             ipa_install_args.append('--idstart=%d' % values['id_start'])
             ipa_install_args.append('--idmax=%d' % values['id_max'])
 
-        # TODO: If the user has specified a root CA file,
-        # set up the argument to ipa-server-install
 
         # Remove the passwords from the values so
         # they won't be saved to the settings

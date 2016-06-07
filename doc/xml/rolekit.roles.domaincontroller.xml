@@ -260,6 +260,17 @@ rolectl settings domaincontroller/&lt;instance&gt;
               </para>
             </listitem>
           </varlistentry>
+          <varlistentry>
+            <term><command>ipa_server_install_args</command></term>
+            <listitem>
+              <para>
+                A dictionary of additional arguments to supply to <command>ipa-server-install</command>.
+              </para>
+              <para>
+                Note: If an argument does not require a value, use <literal>true</literal> in the settings file.
+              </para>
+            </listitem>
+          </varlistentry>
         </variablelist>
       </para>
     </refsect2>
@@ -273,7 +284,8 @@ rolectl settings domaincontroller/&lt;instance&gt;
   "serve_dns": true,
   "primary_ip": "192.168.122.2",
   "id_start": 200000,
-  "id_max": 400000
+  "id_max": 400000,
+  "ipa_server_install_args": {"zonemgr": "domainadmin@example.com", "allow-zone-overlap": true}
 }
     </programlisting>
   </refsect1>
